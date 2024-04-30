@@ -1,5 +1,6 @@
 import firebase_admin
 from firebase_admin import credentials,firestore
+from google.cloud.firestore_v1 import SERVER_TIMESTAMP
 from flask import Flask, request, jsonify, render_template
 import uuid
 
@@ -32,11 +33,14 @@ def create_user():
         'full_name': full_name,
         'mob_num': mob_num,
         'pan_num': pan_num,
-        'manager_id': manager_id
+        'manager_id': manager_id,
+        'Created_at': SERVER_TIMESTAMP
     }
     
     db.collection('user_credentials').document(user_id).set(user_data)
     return jsonify({'message': 'User created successfully','user_id':user_id}), 201
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

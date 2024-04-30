@@ -1,0 +1,27 @@
+<!-- create_user.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create_user</title>
+</head>
+<body>
+    <h1>Add credentials</h1>
+    <form action="/create_user" method="POST">
+        <label for="full_name">Full Name:</label>
+        <input type="text" id="full_name" name="full_name" required><br><br>
+
+        <label for="mob_num">Mobile Number:</label>
+        <input type="text" id="mob_num" name="mob_num" required><br><br>
+
+        <label for="pan_num">PAN Number:</label>
+        <input type="text" id="pan_num" name="pan_num" required><br><br>
+
+        <label for="manager_id">Manager ID:</label>
+        <input type="text" id="manager_id" name="manager_id"><br><br>
+
+        <button type="submit">Create User</button>
+    </form>
+</body>
+</html>

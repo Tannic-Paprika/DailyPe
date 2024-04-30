@@ -23,5 +23,35 @@
 
         <button type="submit">Create User</button>
     </form>
+    <h1>Check Users</h1>
+    <form action="/get_user" method="POST">
+        <label for="mob_num">Mobile Number:</label>
+        <input type="text" id="mob_num" name="mob_num"><br><br>
+
+        <label for="manager_id">Manager ID:</label>
+        <input type="text" id="manager_id" name="manager_id"><br><br>
+
+        <label for="user_id">User ID:</label>
+        <input type="text" id="user_id" name="user_id"><br><br>
+
+        <button type="submit">Check User</button>
+    </form>
+    <h1>Delete User</h1>
+    <form action="delete_user" method="POST">
+        <label for="mob_num">Mobile Number:</label>
+        <input type="text" id="mob_num" name="mob_num"><br><br>
+
+        <label for="user_id">User ID:</label>
+        <input type="text" id="user_id" name="user_id"><br><br>
+
+        <button type="submit">Delete User</button>
+    </form>
+    <h1>Update User</h1>
+    <form action="update_user" method="POST">
+        <label for="manager_id">Manager ID:</label>
+        <input type="text" id="manager_id" name="manager_id"><br><br>
+
+        
+
 </body>
 </html>

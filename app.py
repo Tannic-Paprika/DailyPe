@@ -72,6 +72,75 @@ def get_user():
     
     return jsonify({'users':users})
 
+@app.route('/delete_user',methods=['POST'])
+def delete_user():
+    mob =  request.form.get('mob_num')
+    user_id= request.form.get('user_id')
+    
+    query = db.collection('user_credentials')
+    if mob:
+        query = query.where('mob_num', '==', mob)
+    if user_id:
+        query = query.where('user_id', '==', user_id)
+    
+    user_docs = query.stream()
+    for doc in user_docs:
+        doc.reference.delete()
+    
+    return jsonify({'message': 'User deleted successfully'})
+
+@app.route('/update_user',methods=['POST'])
+def update_user():
+    manager_id= request.json.get('manager_id')
+    user_data=request.json.get('user_data')
+    #bulk update
+    if manager_id:
+        for user_info in user_data:
+            user_id,full_name,mob_num,pan_num= user_info
+            user_query = db.collection('user_credentials').where('user_id', '==', user_id)
+            user_docs = user_query.stream()
+            if not user_docs:
+                return jsonify({'error': 'User not found'}), 404
+            
+            print(user_docs)
+            mob_num= mob_num[-10:]
+            pan_num= pan_num.upper()
+            updated_user_data = {
+                'user_id': user_id,
+                'manager_id': manager_id,
+                'full_name': full_name,
+                'mob_num': mob_num,
+                'pan_num': pan_num,
+                'updated_at': SERVER_TIMESTAMP,
+                'is_active': False
+            }
+    
+        for user_doc in user_docs:
+            user_doc.reference.update(updated_user_data)
+        return jsonify({'message':'user updated succesfully'})
+    
+    #individual update
+    if len(user_data) >1 :
+        return jsonify({'error':'Extra data should be filled individually, cant be done in bulk'}),404
+    
+    user_id,full_name,mob_num,pan_num= user_data
+    user_query = db.collection('user_credentials').where('user_id', '==', user_id)
+    user_docs = user_query.stream()
+    mob_num= mob_num[-10:]
+    pan_num= pan_num.upper()
+    updated_user_data = {
+                'user_id': user_id,
+                'full_name': full_name,
+                'mob_num': mob_num,
+                'pan_num': pan_num,
+                'updated_at': SERVER_TIMESTAMP,
+                'is_active': False
+            }
+    for user_doc in user_docs:
+            user_doc.reference.update(updated_user_data)
+    return jsonify({'message':'user updated succesfully'})
+
+        
 
 if __name__ == '__main__':
     app.run(debug=True)

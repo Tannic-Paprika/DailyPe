@@ -3,6 +3,7 @@ from firebase_admin import credentials,firestore
 from google.cloud.firestore_v1 import SERVER_TIMESTAMP
 from flask import Flask, request, jsonify, render_template
 import uuid
+import json
 
 app = Flask(__name__)
 
@@ -97,12 +98,12 @@ def update_user():
     if manager_id:
         for user_info in user_data:
             user_id,full_name,mob_num,pan_num= user_info
-            user_query = db.collection('user_credentials').where('user_id', '==', user_id)
-            user_docs = user_query.stream()
+            user_query = db.collection('user_credentials').where('user_id', '==', user_id).limit(1)
+            print("A")
+            user_docs = user_query.get()
             if not user_docs:
                 return jsonify({'error': 'User not found'}), 404
             
-            print(user_docs)
             mob_num= mob_num[-10:]
             pan_num= pan_num.upper()
             updated_user_data = {
@@ -115,17 +116,17 @@ def update_user():
                 'is_active': False
             }
     
-        for user_doc in user_docs:
-            user_doc.reference.update(updated_user_data)
+            for user_doc in user_docs:
+                db.collection("users").document(user_doc.id).update(json.load(updated_user_data))
         return jsonify({'message':'user updated succesfully'})
     
     #individual update
-    if len(user_data) >1 :
+    if all(isinstance(user,list) for user in user_data ) :
         return jsonify({'error':'Extra data should be filled individually, cant be done in bulk'}),404
-    
+
     user_id,full_name,mob_num,pan_num= user_data
-    user_query = db.collection('user_credentials').where('user_id', '==', user_id)
-    user_docs = user_query.stream()
+    user_query = db.collection('user_credentials').where('user_id', '==', user_id).limit(1)
+    user_docs = user_query.get()
     mob_num= mob_num[-10:]
     pan_num= pan_num.upper()
     updated_user_data = {
@@ -137,7 +138,7 @@ def update_user():
                 'is_active': False
             }
     for user_doc in user_docs:
-            user_doc.reference.update(updated_user_data)
+            db.collection("users").document(user_doc.id).update(updated_user_data)
     return jsonify({'message':'user updated succesfully'})
 
         
